@@ -8,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 st.set_page_config(page_title="Multi-API Chatbot", layout="wide")
 st.title("Multi-API Chatbot")
 
-# --- API Key Management ---
+# api key management
 try:
     google_api_key = st.secrets["GOOGLE_API_KEY"]
 except KeyError:
@@ -21,7 +21,6 @@ except KeyError:
     openrouter_api_key = "" 
     st.warning("OpenRouter API Key not found. Please add it to your secrets.")
 
-# --- MOVED MODEL AND CHAIN INITIALIZATION ---
 @st.cache_resource
 def load_chain(model_name, temp, max_tok, p, k):
     prompt = ChatPromptTemplate.from_messages([
@@ -43,7 +42,7 @@ def load_chain(model_name, temp, max_tok, p, k):
         )
         return prompt | llm
 
-    elif model_name == "Deepseek V3.1": # MODIFIED LABEL
+    elif model_name == "Deepseek V3.1": 
         if not openrouter_api_key:
             return None
         
@@ -58,12 +57,12 @@ def load_chain(model_name, temp, max_tok, p, k):
         return prompt | llm
     return None
 
-# --- Sidebar for Model Selection and Settings ---
+# sidebar management
 with st.sidebar:
     st.header("Model Configuration")
     selected_model = st.selectbox(
         "Choose a model",
-        ["Gemini", "Deepseek V3.1"] # MODIFIED LABEL
+        ["Gemini", "Deepseek V3.1"] 
     )
     
     st.subheader("Advanced Settings")
@@ -71,7 +70,7 @@ with st.sidebar:
     max_tokens = st.slider("Max Tokens", min_value=100, max_value=4096, value=300, step=100)
     top_p = st.slider("Top-P", min_value=0.0, max_value=1.0, value=0.9, step=0.05)
     
-    is_openrouter = selected_model == "Deepseek V3.1" # MODIFIED LABEL
+    is_openrouter = selected_model == "Deepseek V3.1" 
     top_k = st.slider(
         "Top-K (Gemini only)", 
         min_value=1, 
@@ -107,7 +106,7 @@ with st.sidebar:
                 st.subheader("Chat Summary")
                 st.info(summary.content)
 
-# --- Chat History Management ---
+# chat history 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -115,7 +114,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- Chat Input and Response ---
+# chat management
 if prompt_input := st.chat_input("What would you like to ask?"):
     st.session_state.messages.append({"role": "user", "content": prompt_input})
     with st.chat_message("user"):
